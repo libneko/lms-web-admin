@@ -6,13 +6,10 @@ import { useRouter } from 'vue-router'
 
 import BookGrid from '@/component/book-grid.vue'
 
-// 分类数据
 const router = useRouter()
 const categories = ref<Category[]>([])
 const books = ref<Book[]>([])
-// Banner 图书
 const banners = ref<Book[]>([])
-// 推荐图书
 const suggestBooks = ref<Book[]>([])
 
 const loadData = async () => {
@@ -30,10 +27,8 @@ const searchCategory = (id: number) => {
   })
 }
 
-// Banner轮播逻辑
 const currentIndex = ref(0)
 
-// 自动轮播
 onMounted(() => {
   loadData()
 })

@@ -13,9 +13,9 @@ import { ElMessage, ElMessageBox, type CollapseModelValue } from 'element-plus'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 
 const dialogVisible = ref(false)
-const isEditMode = ref(false) // 标记当前是否为编辑模式
-const currentPage = ref(1) // 当前页码
-const pageSize = ref(5) // 每页显示数量 (设小一点方便看效果)
+const isEditMode = ref(false)
+const currentPage = ref(1)
+const pageSize = ref(5)
 const searchQuery = ref('')
 const total = ref(0)
 const categories = ref<Category[]>([])
@@ -62,13 +62,13 @@ const handleCoverChange = (uploadFile: any) => {
   bookForm.image = URL.createObjectURL(uploadFile.raw)
 }
 const handleCurrentChange = (val: number) => {
-  fetchBooks() // 重新向后端拿数据
+  fetchBooks()
   window.scrollTo(0, 0)
 }
 const handleSizeChange = (val: number) => {
   pageSize.value = val
-  currentPage.value = 1 // 改变每页大小时，回第一页
-  fetchBooks() // 重新向后端拿数据
+  currentPage.value = 1
+  fetchBooks()
 }
 
 const copyBookFormToSendBook = () => {
@@ -82,10 +82,8 @@ const changestatus = async (item: Book) => {
   try {
     const res = await changeStatusApi(item.id, newStatus)
     if (res.code === 1) {
-      setTimeout(async () => {
-        await fetchBooks()
-        ElMessage.success('状态更改成功')
-      }, 1000)
+      await fetchBooks()
+      ElMessage.success('状态更改成功')
     } else {
       ElMessage.error(res.message || '更改状态失败')
     }
@@ -95,7 +93,6 @@ const changestatus = async (item: Book) => {
 }
 
 const submitBook = async () => {
-  // 验证库存数量
   if (bookForm.stock < 1 || bookForm.stock > 10) {
     ElMessage.error('库存数量必须在1-10之间')
     return
@@ -105,9 +102,8 @@ const submitBook = async () => {
     try {
       const uploadRes = await upload(rawFile.value)
       if (uploadRes.code === 1) {
-        // 后端返回的是图片的真实访问路径
         const imageUrl = uploadRes.data
-        bookForm.image = imageUrl // 更新表单里的图片地址为后端返回的地址
+        bookForm.image = imageUrl
       } else {
         ElMessage.error('图片上传失败，请稍后重试')
         return
@@ -119,55 +115,41 @@ const submitBook = async () => {
   }
   copyBookFormToSendBook()
   if (isEditMode.value) {
-    // 编辑模式，调用更新接口
     const res = await updateApi(sendBook)
     if (res.code === 1) {
-      // 更新表格数据
-      setTimeout(async () => {
-        await fetchBooks()
-        ElMessage.success('书籍更新成功')
-      }, 1000)
+      await fetchBooks()
+      ElMessage.success('书籍更新成功')
+      dialogVisible.value = false
     } else {
       ElMessage.error(res.message || '更新失败，请稍后重试')
-      return
     }
-    // 成功后关闭弹窗
-    dialogVisible.value = false
     return
   } else {
     sendBook.id = null
 
     const res = await submitBookApi(sendBook)
     if (res.code === 1) {
-      setTimeout(async () => {
-        currentPage.value = 1
-        await fetchBooks()
-        ElMessage.success('书籍添加成功')
-      }, 1000)
+      currentPage.value = 1
+      await fetchBooks()
+      ElMessage.success('书籍添加成功')
     } else {
       ElMessage.error(res.message || '操作失败，请稍后重试')
       return
     }
   }
 
-  // 成功后关闭弹窗
   dialogVisible.value = false
 }
 
-// 2. 打开【添加】弹窗
 const handleAdd = () => {
   isEditMode.value = false
-  // 重置表单
   Object.assign(bookForm, defaultBook)
-  // 如果需要清空图片，确保 image 为空
   bookForm.image = ''
   dialogVisible.value = true
 }
 
 const editBook = (row: Book) => {
   isEditMode.value = true
-  // 将当前行数据复制到表单
-  // 使用 JSON 深拷贝防止修改表单时表格跟着变（根据需求可选）
   Object.assign(bookForm, JSON.parse(JSON.stringify(row)))
   dialogVisible.value = true
 }
@@ -183,7 +165,7 @@ const deletebook = async (row: Book) => {
       ElMessage.error('删除失败，请检查是否已下架')
       return
     }
-    tableData.value = tableData.value.filter((item) => item.id !== row.id)
+    await fetchBooks()
     ElMessage.success('删除成功')
   })
 }
@@ -193,22 +175,21 @@ watch(searchQuery, () => {
   timer = setTimeout(() => {
     currentPage.value = 1
     fetchBooks()
-  }, 500) // 用户停止输入 500ms 后才发请求
+  }, 500)
 })
 
 const fetchBooks = async () => {
   const params: SendSearch = {
     page: currentPage.value,
     pageSize: pageSize.value,
-    name: searchQuery.value, // 将搜索框的值传给后端
-    categoryId: 0, // 根据实际逻辑修改或绑定
-    status: null, // 根据实际逻辑修改或绑定
+    name: searchQuery.value,
+    categoryId: 0,
+    status: null,
   }
 
   try {
     const res = await getBooks(params)
     if (res.code === 1) {
-      // 后端返回的是 GetBooks 结构：{ total: number, records: Book[] }
       tableData.value = res.data.records
       total.value = res.data.total
     }

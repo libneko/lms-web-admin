@@ -6,11 +6,11 @@ import { ElMessage } from 'element-plus'
 import { computed, onMounted, ref, watch } from 'vue'
 
 const dialogVisible = ref(false)
-const currentPage = ref('1') // 当前页码
-const pageSize = ref('5') // 每页显示数量 (设小一点方便看效果)
+const currentPage = ref('1')
+const pageSize = ref('5')
 const searchQuery = ref('')
 const total = ref(0)
-const currentBorrow = ref<Borrow | null>(null) // 存储当前点击的借阅数据
+const currentBorrow = ref<Borrow | null>(null)
 let timer: any = null
 
 const stepActiveIndex = computed(() => {
@@ -20,13 +20,12 @@ const stepActiveIndex = computed(() => {
 })
 
 const handleCurrentChange = (val: number) => {
-  // 可以在这里加一行代码让页面滚动回顶部
-  fetchBorrows() // 重新向后端拿数据
+  fetchBorrows()
   window.scrollTo(0, 0)
 }
 const handleSizeChange = (val: string) => {
   pageSize.value = val
-  currentPage.value = '1' // 改变每页大小时，建议重置回第一页
+  currentPage.value = '1'
   fetchBorrows()
 }
 
@@ -45,14 +44,13 @@ const open_borrow = async (borrowId: number) => {
   }
   const targetBorrow = borrows.value.find((item) => item.id === borrowId)
   if (targetBorrow) {
-    currentBorrow.value = targetBorrow // 设置当前借阅
-    dialogVisible.value = true // 打开弹窗
+    currentBorrow.value = targetBorrow
+    dialogVisible.value = true
   } else {
     ElMessage.error('未找到借阅数据')
   }
 }
 const formatStatus = (status: number) => {
-  // 尝试从 Map 中获取，如果获取不到（比如后端传了个 999），则返回默认对象
   return BorrowStatusMap[status] || { label: '未知状态', type: 'info' }
 }
 
@@ -80,7 +78,7 @@ watch(searchQuery, () => {
   timer = setTimeout(() => {
     currentPage.value = '1'
     fetchBorrows()
-  }, 500) // 用户停止输入 500ms 后才发请求
+  }, 500)
 })
 
 onMounted(async () => {

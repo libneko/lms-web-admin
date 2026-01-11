@@ -5,7 +5,6 @@ import { Delete } from '@element-plus/icons-vue'
 import type { SendSearch } from '@/api/types'
 import { changeStatusApi, deleteUserApi, getUserApi } from '@/api/user-management'
 
-// 定义用户类型 - 所有属性都是必需的
 interface UserItem {
   id: number
   username: string
@@ -17,14 +16,12 @@ interface UserItem {
   selected?: boolean
 }
 
-// 响应式数据
 const loading = ref(false)
 const userList = ref<UserItem[]>([])
 const searchKeyword = ref('')
 const showEditUserDialog = ref(false)
 const currentEditUser = ref<UserItem | null>(null)
 
-// 分页信息
 const pagination = ref({
   currentPage: 1,
   pageSize: 10,
@@ -41,7 +38,6 @@ const editUserForm = ref({
   avatar: '',
 })
 
-// 计算属性
 const selectedCount = computed(() => {
   return userList.value.filter((user) => user.selected).length
 })
@@ -78,7 +74,6 @@ const activeUserCount = computed(() => {
   return userList.value.filter((user) => user.status === 1).length
 })
 
-// 方法定义
 const fetchUserData = async () => {
   const params: SendSearch = {
     page: pagination.value.currentPage,
@@ -144,17 +139,14 @@ const deleteUser = async (id: number) => {
 }
 
 const batchDeleteUsers = async () => {
-  // 1. 获取所有 selected 为 true 的用户 ID
   const selectedIds = userList.value.filter((user) => user.selected).map((user) => user.id)
 
-  // 2. 校验是否选择了用户
   if (selectedIds.length === 0) {
     ElMessage.warning('请先勾选要删除的用户')
     return
   }
 
   try {
-    // 3. 确认弹窗
     await ElMessageBox.confirm(
       `确定要批量删除这 ${selectedIds.length} 位用户吗？`,
       '批量删除提示',
@@ -165,15 +157,11 @@ const batchDeleteUsers = async () => {
       },
     )
 
-    // 4. 调用后端接口
-
     const res = await deleteUserApi(selectedIds.join(','))
 
     if (res.code === 1) {
       ElMessage.success('批量删除成功')
-      // 刷新列表
       await fetchUserData()
-      // 可选：清空选中状态（如果刷新数据后前端没重置的话）
     } else {
       ElMessage.error('批量删除失败')
     }
@@ -197,7 +185,6 @@ const handleCurrentChange = (newPage: number) => {
   fetchUserData()
 }
 
-// 生命周期
 onMounted(() => {
   fetchUserData()
 })
