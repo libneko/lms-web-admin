@@ -58,7 +58,7 @@ const fetchBorrows = async () => {
   const params: SendBorrow = {
     page: currentPage.value,
     pageSize: pageSize.value,
-    number: searchQuery.value,
+    number: searchQuery.value.trim(),
     beginTime: '',
     endTime: '',
     status: '',
@@ -104,7 +104,7 @@ const formatBorrowTime = (timestamp: string | number | Date) => {
   <div class="borrow">
     <div class="search-area">
       <el-input
-        v-model="searchQuery"
+        v-model.trim="searchQuery"
         placeholder="请输入借阅编号进行搜索..."
         clearable
         prefix-icon="Search"
