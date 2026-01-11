@@ -33,10 +33,11 @@ defineProps<{
 
 .book-name {
   font-size: 14px;
+  color: var(--el-text-color-primary);
 }
 
 .book-link {
   text-decoration: none;
-  color: inherit;
+  color: var(--el-text-color-primary);
 }
 </style>
