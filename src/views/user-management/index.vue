@@ -332,12 +332,12 @@ onMounted(() => {
   align-items: center;
   margin-bottom: 20px;
   padding-bottom: 15px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--el-border-color);
 }
 
 .management-header h2 {
   margin: 0;
-  color: #333;
+  color: var(--el-text-color-primary);
   font-size: 24px;
 }
 
@@ -348,7 +348,7 @@ onMounted(() => {
 }
 
 .selected-count {
-  color: #666;
+  color: var(--el-text-color-regular);
   font-size: 14px;
 }
 
@@ -362,7 +362,7 @@ onMounted(() => {
 .stats {
   display: flex;
   gap: 20px;
-  color: #666;
+  color: var(--el-text-color-regular);
   font-size: 14px;
 }
 
@@ -376,11 +376,11 @@ onMounted(() => {
   grid-template-columns: 60px 1fr 200px 150px 100px 150px;
   gap: 15px;
   padding: 15px 20px;
-  background-color: #f8f9fa;
-  border-bottom: 1px solid #e8e8e8;
+  background-color: var(--el-fill-color-light);
+  border-bottom: 1px solid var(--el-border-color);
   align-items: center;
   font-weight: 500;
-  color: #333;
+  color: var(--el-text-color-primary);
 }
 
 .head-label {
@@ -392,20 +392,20 @@ onMounted(() => {
 }
 
 .user-list {
-  background-color: #fff;
+  background-color: var(--el-bg-color);
 }
 
 .user-item {
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--el-border-color-lighter);
   transition: background-color 0.3s ease;
 }
 
 .user-item:hover {
-  background-color: #fafafa;
+  background-color: var(--el-fill-color-light);
 }
 
 .user-item.selected {
-  background-color: #f0f7ff;
+  background-color: var(--el-color-primary-light-9);
 }
 
 .user-content {
@@ -439,7 +439,7 @@ onMounted(() => {
   margin: 0 0 8px 0;
   font-size: 16px;
   font-weight: 600;
-  color: #333;
+  color: var(--el-text-color-primary);
 }
 
 .user-meta {
@@ -450,13 +450,13 @@ onMounted(() => {
 }
 
 .username-id {
-  color: #666;
+  color: var(--el-text-color-regular);
   font-size: 12px;
 }
 
 .create-time {
   font-size: 12px;
-  color: #999;
+  color: var(--el-text-color-secondary);
 }
 
 .contact-info {
@@ -500,15 +500,15 @@ onMounted(() => {
   padding: 20px;
   display: flex;
   justify-content: center;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid var(--el-border-color-lighter);
 }
 
 /* 底部悬浮栏样式 */
 .management-footer-affix {
   width: 100%;
-  background: #fff;
-  border-top: 1px solid #e8e8e8;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+  background: var(--el-bg-color);
+  border-top: 1px solid var(--el-border-color);
+  box-shadow: 0 -2px 10px var(--el-box-shadow-light);
   z-index: 1000;
 }
 
@@ -536,7 +536,7 @@ onMounted(() => {
 .summary {
   text-align: right;
   font-size: 14px;
-  color: #666;
+  color: var(--el-text-color-regular);
 }
 
 /* 响应式设计 */
@@ -575,7 +575,7 @@ onMounted(() => {
     justify-content: space-between;
     align-items: center;
     padding: 5px 0;
-    border-top: 1px solid #f0f0f0;
+    border-top: 1px solid var(--el-border-color-lighter);
   }
 
   .user-actions {

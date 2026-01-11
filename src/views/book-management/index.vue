@@ -494,7 +494,7 @@ onMounted(async () => {
 .book-title {
   font-size: 16px;
   font-weight: bold;
-  color: #303133;
+  color: var(--el-text-color-primary);
   margin-bottom: 8px;
   /* 超出省略 */
   overflow: hidden;
