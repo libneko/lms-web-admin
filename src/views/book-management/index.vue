@@ -9,6 +9,7 @@ import {
 } from '@/api/book-management'
 import { getCategories } from '@/api/home'
 import type { Book, Category, SendBookData, SendSearch } from '@/api/types'
+import { formatRelativeTime } from '@/utils/datetime'
 import { ElMessage, ElMessageBox, type CollapseModelValue } from 'element-plus'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 
@@ -381,7 +382,9 @@ onMounted(async () => {
             </el-col>
 
             <el-col class="book-time" :span="5">
-              {{ item.update_time }}
+              <el-tooltip :content="item.update_time" placement="top">
+                <span>{{ formatRelativeTime(item.update_time) }}</span>
+              </el-tooltip>
             </el-col>
           </el-row>
         </el-card>

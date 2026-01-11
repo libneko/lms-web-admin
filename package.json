@@ -15,6 +15,7 @@
     "format": "prettier --write --experimental-cli src/"
   },
   "dependencies": {
+    "@js-temporal/polyfill": "^0.5.1",
     "axios": "^1.13.2",
     "element-china-area-data": "^6.1.0",
     "element-plus": "^2.13.0",
