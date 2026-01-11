@@ -62,12 +62,10 @@ const handleCoverChange = (uploadFile: any) => {
   bookForm.image = URL.createObjectURL(uploadFile.raw)
 }
 const handleCurrentChange = (val: number) => {
-  console.log(`当前页: ${val}`)
   fetchBooks() // 重新向后端拿数据
   window.scrollTo(0, 0)
 }
 const handleSizeChange = (val: number) => {
-  console.log(`每页 ${val} 条`)
   pageSize.value = val
   currentPage.value = 1 // 改变每页大小时，回第一页
   fetchBooks() // 重新向后端拿数据
@@ -82,9 +80,7 @@ const copyBookFormToSendBook = () => {
 const changestatus = async (item: Book) => {
   const newStatus = item.status === 1 ? 0 : 1
   try {
-    console.log(item.id, newStatus)
     const res = await changeStatusApi(item.id, newStatus)
-    console.log(res)
     if (res.code === 1) {
       setTimeout(async () => {
         await fetchBooks()
@@ -99,7 +95,12 @@ const changestatus = async (item: Book) => {
 }
 
 const submitBook = async () => {
-  console.log('提交的数据:', bookForm)
+  // 验证库存数量
+  if (bookForm.stock < 1 || bookForm.stock > 10) {
+    ElMessage.error('库存数量必须在1-10之间')
+    return
+  }
+
   if (rawFile.value) {
     try {
       const uploadRes = await upload(rawFile.value)
@@ -117,7 +118,6 @@ const submitBook = async () => {
     }
   }
   copyBookFormToSendBook()
-  console.log('发送给后端的数据:', sendBook)
   if (isEditMode.value) {
     // 编辑模式，调用更新接口
     const res = await updateApi(sendBook)
@@ -179,7 +179,6 @@ const deletebook = async (row: Book) => {
     type: 'warning',
   }).then(async () => {
     const res = await deleteBookApi(String(row.id))
-    console.log(res)
     if (res.code !== 1) {
       ElMessage.error('删除失败，请检查是否已下架')
       return
@@ -208,14 +207,13 @@ const fetchBooks = async () => {
 
   try {
     const res = await getBooks(params)
-    console.log('获取书籍数据:', res)
     if (res.code === 1) {
       // 后端返回的是 GetBooks 结构：{ total: number, records: Book[] }
       tableData.value = res.data.records
       total.value = res.data.total
     }
   } catch (error) {
-    console.error('加载数据失败', error)
+    ElMessage.error('加载数据失败')
   }
 }
 const fetchCategory = async () => {
@@ -300,7 +298,7 @@ onMounted(async () => {
             </el-col>
             <el-col :span="12">
               <el-form-item label="数量">
-                <el-input-number v-model="bookForm.stock" :min="0" style="width: 100%" />
+                <el-input-number v-model="bookForm.stock" :min="1" :max="10" style="width: 100%" />
               </el-form-item>
             </el-col>
           </el-row>
@@ -366,7 +364,7 @@ onMounted(async () => {
                 <el-col :span="6">
                   <el-image
                     :src="item.image"
-                    style="width: 80px; height: 100px; book-radius: 4px"
+                    style="width: 80px; height: 100px; border-radius: 4px"
                     fit="cover"
                   >
                     <template #error>

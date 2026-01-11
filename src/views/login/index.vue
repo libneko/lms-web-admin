@@ -22,7 +22,6 @@ const login = async () => {
     return
   }
 
-  console.log(pwdForm.username, pwdForm.password)
   result = await loginApi({
     username: pwdForm.username,
     password: pwdForm.password,

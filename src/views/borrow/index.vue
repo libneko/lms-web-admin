@@ -20,13 +20,11 @@ const stepActiveIndex = computed(() => {
 })
 
 const handleCurrentChange = (val: number) => {
-  console.log(`当前页: ${val}`)
   // 可以在这里加一行代码让页面滚动回顶部
   fetchBorrows() // 重新向后端拿数据
   window.scrollTo(0, 0)
 }
 const handleSizeChange = (val: string) => {
-  console.log(`每页 ${val} 条`)
   pageSize.value = val
   currentPage.value = '1' // 改变每页大小时，建议重置回第一页
   fetchBorrows()
@@ -36,7 +34,6 @@ const borrows = ref<Borrow[]>([])
 
 const open_borrow = async (borrowId: number) => {
   const BorrowDetail = await getBorrowDetailApi(borrowId)
-  console.log('BorrowDetail:', BorrowDetail)
   if (BorrowDetail.code === 1) {
     const index = borrows.value.findIndex((item) => item.id === borrowId)
     if (index !== -1) {
@@ -71,11 +68,8 @@ const fetchBorrows = async () => {
 
   try {
     const res = await getBorrow(params)
-    console.log('获取借阅数据:', res)
     if (res.code === 1) {
-      console.log('res.data.records:', res.data.records)
       borrows.value = res.data.records
-      console.log('borrows.value:', borrows.value)
       total.value = res.data.total
     }
   } catch (error) {}

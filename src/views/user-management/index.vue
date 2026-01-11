@@ -92,12 +92,9 @@ const fetchUserData = async () => {
   try {
     const res = await getUserApi(params)
 
-    console.log(res)
-
     userList.value = res.data.records
     pagination.value.total = res.data.total
   } catch (error) {
-    console.error('获取用户数据失败:', error)
     ElMessage.error('网络错误，请稍后重试')
   } finally {
     loading.value = false
@@ -113,9 +110,7 @@ const handleSelectAllChange = (value: boolean) => {
 const updateUserStatus = async (user: UserItem) => {
   const newStatus = user.status === 1 ? 0 : 1
   try {
-    console.log(user.id, newStatus)
     const res = await changeStatusApi(user.id, newStatus)
-    console.log(res)
     if (res.code === 1) {
       setTimeout(async () => {
         await fetchUserData()
@@ -123,7 +118,6 @@ const updateUserStatus = async (user: UserItem) => {
       }, 1000)
     }
   } catch (error) {
-    console.error('更新用户状态失败:', error)
     ElMessage.error('更新失败，请稍后重试')
   }
 }
@@ -185,9 +179,10 @@ const batchDeleteUsers = async () => {
     }
   } catch (error) {
     if (error !== 'cancel') {
-      console.error(error)
+      ElMessage.error('删除过程中发生错误')
+    } else {
+      ElMessage.info('已取消删除')
     }
-    ElMessage.info('已取消删除')
   }
 }
 
@@ -204,7 +199,6 @@ const handleCurrentChange = (newPage: number) => {
 
 // 生命周期
 onMounted(() => {
-  console.log('用户管理组件已加载')
   fetchUserData()
 })
 </script>

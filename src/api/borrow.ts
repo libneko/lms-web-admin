@@ -18,7 +18,6 @@ export const getBorrow = (data: SendBorrow): Promise<ApiResponse<GetBorrows>> =>
   if (data.status) {
     params.append('status', data.status)
   }
-  console.log('传入参数' + params.toString())
   return request.get(`/admin/borrow/conditionSearch?${params.toString()}`)
 }
 export const getBorrowDetailApi = (borrow_id: number): Promise<ApiResponse<Borrow>> => {
