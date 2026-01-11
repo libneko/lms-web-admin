@@ -8,7 +8,7 @@ import {
   upload,
 } from '@/api/book-management'
 import { getCategories } from '@/api/home'
-import type { Book, Category, Order, SendBookData, SendSearch } from '@/api/types'
+import type { Book, Category, SendBookData, SendSearch } from '@/api/types'
 import { ElMessage, ElMessageBox, type CollapseModelValue } from 'element-plus'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 
@@ -290,9 +290,6 @@ onMounted(async () => {
               <el-form-item label="ISBN">
                 <el-input v-model="bookForm.isbn" placeholder="例如: 9787xxx" />
               </el-form-item>
-            </el-col>
-            <el-col :span="12">
-
             </el-col>
           </el-row>
           <el-row :gutter="20">

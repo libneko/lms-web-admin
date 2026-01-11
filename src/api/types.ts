@@ -81,8 +81,6 @@ export interface GetBooks {
   records: Book[]
 }
 
-
-
 export interface User {
   id: number
   username: string
@@ -98,28 +96,21 @@ export interface GetUsers {
   records: User[]
 }
 
-export interface items {
-  book_id: number
-  title: string
-  quantity: number
-  price: number
-}
-
-export interface Order {
+export interface Borrow {
   id: number
   number: string
   status: number
   user_id: number
   borrow_time: string
-  renew_count:number
+  renew_count: number
   due_date: string
   user_name: string
   return_time: string
   borrow_books: string
-  borrow_detail_list: OrderDetail[]
+  borrow_detail_list: BorrowDetail[]
 }
 
-export interface OrderDetail {
+export interface BorrowDetail {
   id: number
   name: string
   borrow_record_id: number
@@ -128,7 +119,7 @@ export interface OrderDetail {
   image: string
 }
 
-export interface SendOrder {
+export interface SendBorrow {
   beginTime: string
   endTime: string
   number: string
@@ -138,7 +129,7 @@ export interface SendOrder {
   status: string
 }
 
-export interface GetOrders {
+export interface GetBorrows {
   total: number
-  records: Order[]
+  records: Borrow[]
 }

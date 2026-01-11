@@ -6,10 +6,10 @@ import router from '@/router'
 // 1. 定义后端推送的消息格式契约
 // 这样在代码里使用 data.xxx 时会有自动提示
 export interface NotificationPayload {
-  type: 'new_order' | 'urge' // 限制 type 只能是这几个字符串
+  type: 'new_borrow' | 'urge' // 限制 type 只能是这几个字符串
   title: string
   content: string
-  orderId?: string | number // 加上 ? 表示该字段可能不存在，防止报错
+  borrowId?: string | number // 加上 ? 表示该字段可能不存在，防止报错
 }
 
 export function useWebSocket() {
@@ -64,15 +64,15 @@ export function useWebSocket() {
     // Element Plus 弹窗
     ElNotification({
       title: data.title || '新通知',
-      message: `您有一条新订单或催单提醒，请及时查看，${data.content}`,
+      message: `您有一条新借阅或催单提醒，请及时查看，${data.content}`,
       // 根据类型动态设置弹窗样式
       type: data.type === 'urge' ? 'warning' : 'success',
       duration: 0, // 不自动关闭
       position: 'top-right',
       onClick: () => {
-        if (data.orderId) {
-          console.log(`跳转到订单: ${data.orderId}`)
-          router.push(`/admin/order`)
+        if (data.borrowId) {
+          console.log(`跳转到借阅: ${data.borrowId}`)
+          router.push(`/admin/borrow`)
         }
       },
     })

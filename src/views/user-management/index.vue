@@ -5,7 +5,6 @@ import { Delete } from '@element-plus/icons-vue'
 import type { SendSearch } from '@/api/types'
 import { changeStatusApi, deleteUserApi, getUserApi } from '@/api/user-management'
 
-
 // 定义用户类型 - 所有属性都是必需的
 interface UserItem {
   id: number
@@ -41,7 +40,6 @@ const editUserForm = ref({
   status: 0,
   avatar: '',
 })
-
 
 // 计算属性
 const selectedCount = computed(() => {
@@ -111,7 +109,6 @@ const handleSelectAllChange = (value: boolean) => {
     user.selected = value
   })
 }
-
 
 const updateUserStatus = async (user: UserItem) => {
   const newStatus = user.status === 1 ? 0 : 1
@@ -277,7 +274,6 @@ onMounted(() => {
                     {{ user.sex === 1 ? '男' : '女' }}
                   </el-tag>
                 </div>
-                
               </div>
             </div>
 
@@ -295,7 +291,6 @@ onMounted(() => {
 
             <!-- 操作按钮 -->
             <div class="user-actions">
-
               <el-button
                 link
                 :type="user.status === 1 ? 'warning' : 'success'"

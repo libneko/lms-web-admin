@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { Book } from '@/api/types'
-import {} from '@/api/meta'
 
 defineProps<{
   book: Book
@@ -34,12 +33,6 @@ defineProps<{
 
 .book-name {
   font-size: 14px;
-}
-
-.book-price {
-  font-size: 16px;
-  font-weight: bold;
-  color: #ff4400;
 }
 
 .book-link {

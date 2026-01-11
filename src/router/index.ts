@@ -6,7 +6,7 @@ import LoginView from '@/views/login/index.vue'
 
 import BookManagementView from '@/views/book-management/index.vue'
 import UserManagementView from '@/views/user-management/index.vue'
-import OrderView from '@/views/order/index.vue'
+import BorrowView from '@/views/borrow/index.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,9 +34,9 @@ const router = createRouter({
           meta: { title: '用户管理' },
         },
         {
-          path: 'order',
-          name: 'order',
-          component: OrderView,
+          path: 'borrow',
+          name: 'borrow',
+          component: BorrowView,
           meta: { title: '借阅管理' },
         },
       ],
@@ -51,7 +51,7 @@ function isLoggedIn(): boolean {
 }
 
 router.beforeEach((to, _from, next) => {
-  if (!isLoggedIn() && to.name !== 'login' && to.name !== 'register' && to.name !== 'index') {
+  if (!isLoggedIn() && to.name !== 'login' && to.name !== 'index') {
     next({ name: 'login' })
   } else {
     next()

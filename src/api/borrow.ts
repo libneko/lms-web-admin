@@ -1,7 +1,7 @@
 import request from '@/utils/request'
-import type { ApiResponse, GetOrders, Order, SendOrder } from './types'
+import type { ApiResponse, GetBorrows, Borrow, SendBorrow } from './types'
 
-export const getOrder = (data: SendOrder): Promise<ApiResponse<GetOrders>> => {
+export const getBorrow = (data: SendBorrow): Promise<ApiResponse<GetBorrows>> => {
   const params = new URLSearchParams()
   params.append('page', data.page.toString())
   params.append('pageSize', data.pageSize.toString())
@@ -21,6 +21,6 @@ export const getOrder = (data: SendOrder): Promise<ApiResponse<GetOrders>> => {
   console.log('传入参数' + params.toString())
   return request.get(`/admin/borrow/conditionSearch?${params.toString()}`)
 }
-export const GetOrderDetailApi = (order_id: number): Promise<ApiResponse<Order>> => {
-  return request.get(`/admin/borrow/detail/${order_id}`)
+export const getBorrowDetailApi = (borrow_id: number): Promise<ApiResponse<Borrow>> => {
+  return request.get(`/admin/borrow/detail/${borrow_id}`)
 }

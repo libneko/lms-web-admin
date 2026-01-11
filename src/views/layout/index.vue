@@ -88,7 +88,7 @@ const handleSetTheme = (theme: Theme) => {
           <el-menu-item index="/admin/user-management">
             <el-icon><UserFilled /></el-icon> 用户管理
           </el-menu-item>
-          <el-menu-item index="/admin/order">
+          <el-menu-item index="/admin/borrow">
             <el-icon><ChatDotRound /></el-icon> 借阅管理
           </el-menu-item>
         </div>

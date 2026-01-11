@@ -54,7 +54,7 @@ onMounted(() => {
 
       <!-- 横向分类栏 -->
       <div class="category-bar">
-        <div>全部商品分类</div>
+        <div>全部图书分类</div>
 
         <el-scrollbar wrap-style="overflow-x: auto; white-space: nowrap;">
           <el-space size="10">
