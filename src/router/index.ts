@@ -37,7 +37,7 @@ const router = createRouter({
           path: 'order',
           name: 'order',
           component: OrderView,
-          meta: { title: '订单管理' },
+          meta: { title: '借阅管理' },
         },
       ],
     },

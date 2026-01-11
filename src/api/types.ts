@@ -28,7 +28,6 @@ export interface Book {
   name: string
   author: string
   category_id: string
-  price: number
   image: string
   description: string
   status: number
@@ -129,30 +128,21 @@ export interface Order {
   number: string
   status: number
   user_id: number
-  address_book_id: number
-  order_time: string
-  checkout_time: string
-  pay_method: number
-  pay_status: number
-  amount: number
+  borrow_time: string
+  renew_count:number
+  due_date: string
   user_name: string
-  phone: string
-  consignee: string
-  cancel_time: string
-  estimated_delivery_time: string
-  deliver_time: string
-  shipping_fee: number
-  order_books: string
-  order_detail_list: OrderDetail[]
+  return_time: string
+  borrow_books: string
+  borrow_detail_list: OrderDetail[]
 }
 
 export interface OrderDetail {
   id: number
   name: string
-  order_id: number
+  borrow_record_id: number
   book_id: number
   number: number
-  amount: number
   image: string
 }
 
@@ -162,7 +152,7 @@ export interface SendOrder {
   number: string
   page: string
   pageSize: string
-  phone: string
+
   status: string
 }
 

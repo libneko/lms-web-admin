@@ -15,4 +15,20 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  server: {
+    port: 5174,
+    open: '/login',
+    proxy: {
+      '/api': {
+        target: process.env.API_ROOT,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+      '/ws': {
+        target: process.env.API_WSROOT,
+        ws: true,
+        changeOrigin: true,
+      },
+    },
+  }  
 })

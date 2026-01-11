@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import {
-  CompleteOrderApi,
-  DeliveryOrderApi,
-  getOrder,
-  GetOrderDetailApi,
-  SendOrderApi,
-} from '@/api/order'
+import { CompleteOrderApi, DeliveryOrderApi, getOrder, GetOrderDetailApi, SendOrderApi } from '@/api/order'
 import type { Order, SendOrder } from '@/api/types'
 import { OrderStatus, OrderStatusMap } from '@/utils/status'
 import { ElMessage, ElMessageBox, type CollapseModelValue } from 'element-plus'
@@ -27,12 +21,6 @@ const handleChange = (val: CollapseModelValue) => {
 const stepActiveIndex = computed(() => {
   const status = currentOrder.value?.status ?? 0
 
-  // 这里的逻辑是：active 代表"完成"了多少步
-  // 状态 1 (待付款): 完成 0 步 -> active = 0 (第1步高亮为进行中)
-  // 状态 2 (已付款): 完成 1 步 -> active = 1 (第1步变绿，第2步高亮)
-  // 状态 3 (已发货): 完成 2 步 -> active = 2 (前2步变绿，第3步高亮)
-  // 状态 4 (已送达): 完成 3 步 -> active = 3
-  // 状态 5 (已完成): 完成 5 步 -> active = 5 (全部变绿)
   if (status === 0) return 0
 
   if (status === OrderStatus.COMPLETED) {
@@ -41,7 +29,7 @@ const stepActiveIndex = computed(() => {
 
   // 对于 1-4 的状态，active 应该是 status - 1
   // 例如 status=1(待付款)，active应该为0
-  return Math.max(0, status - 1)
+  return Math.max(0, status)
 })
 
 const handleCurrentChange = (val: number) => {
@@ -65,7 +53,7 @@ const open_order = async (orderId: number) => {
   if (OrderDetail.code === 1) {
     const index = orders.value.findIndex((item) => item.id === orderId)
     if (index !== -1) {
-      orders.value[index]!.order_detail_list = OrderDetail.data.order_detail_list
+      orders.value[index]!.borrow_detail_list = OrderDetail.data.borrow_detail_list
     }
   } else {
     ElMessage.error('获取订单详情失败')
@@ -83,42 +71,17 @@ const formatStatus = (status: number) => {
   // 尝试从 Map 中获取，如果获取不到（比如后端传了个 999），则返回默认对象
   return OrderStatusMap[status] || { label: '未知状态', type: 'info' }
 }
-const updateOrderStatus = (order: Order, targetStatus: number) => {
-  const isDelivery = targetStatus === 3
-  const actionName = isDelivery ? '发货' : '派送'
+const updateOrderStatus = async (order: Order, targetStatus: number) => {
 
-  // 1. 二次确认弹窗
-  ElMessageBox.confirm(
-    `确认将订单 "${order.number}" 标记为【已${actionName}】吗？`,
-    `${actionName}确认`,
-    {
-      confirmButtonText: '确认',
-      cancelButtonText: '取消',
-      type: isDelivery ? 'primary' : 'success', // 发货用primary，完成用success
-    },
-  )
-    .then(async () => {
-      const res = ref()
-      if (isDelivery) {
-        // 发货接口
-        res.value = await SendOrderApi(order.id)
-      } else {
-        // 完成订单接口
-        res.value = await DeliveryOrderApi(order.id)
-      }
-      console.log(res)
-      if (res.value.code === 1) {
-        setTimeout(async () => {
-          await fetchOrders()
-          ElMessage.success(`订单已成功${actionName}`)
-        }, 1000)
-      } else {
-        ElMessage.error('操作失败')
-      }
-    })
-    .catch(() => {
-      ElMessage.info('已取消操作')
-    })
+  // 完成订单接口
+  const res = await CompleteOrderApi(order.id)
+  if (res.code === 1) {
+    ElMessage.success("成功归还")
+  }
+  else {
+    ElMessage.error("归还失败")
+  }
+  
 }
 const fetchOrders = async () => {
   const phoneRegex = /^1[3-9]\d{9}$/
@@ -131,7 +94,6 @@ const fetchOrders = async () => {
     number: isPhoneNumber ? '' : searchQuery.value,
     beginTime: '',
     endTime: '',
-    phone: isPhoneNumber ? searchQuery.value : '',
     status: '',
   }
 
@@ -179,7 +141,7 @@ const formatOrderTime = (timestamp: string | number | Date) => {
     <div class="search-area">
       <el-input
         v-model="searchQuery"
-        placeholder="请输入订单号、手机号进行搜索..."
+        placeholder="请输入订单号进行搜索..."
         clearable
         prefix-icon="Search"
         style="width: 300px; margin-bottom: 20px"
@@ -193,7 +155,7 @@ const formatOrderTime = (timestamp: string | number | Date) => {
           <el-col :span="2"></el-col>
           <el-col :span="4">订单号</el-col>
           <el-col class="head-label" :span="4">创建时间</el-col>
-          <el-col class="head-label" :span="4">金额</el-col>
+          <el-col class="head-label" :span="4"></el-col>
           <el-col class="head-label" :span="4">状态</el-col>
           <el-col class="head-label" :span="5">操作</el-col>
           <el-col :span="1"></el-col>
@@ -211,47 +173,23 @@ const formatOrderTime = (timestamp: string | number | Date) => {
             <!-- 关键修改：内容行的栅格分布与表头完全一致 -->
             <el-row :gutter="24" align="middle">
               <el-col :span="1"></el-col>
-              <!-- 留白与表头对齐 -->
+
               <el-col :span="5">{{ order.number }}</el-col>
-              <!-- 订单号 -->
-              <!-- <el-col :span="6">{{ order.order_time }}</el-col> -->
-              <el-col :span="5"> {{ formatOrderTime(order.order_time) }}</el-col>
-              <!-- 创建时间（调整为4） -->
+
+              <el-col :span="5"> {{ formatOrderTime(order.borrow_time) }}</el-col>
+
               <el-col :span="4" style="color: #f56c6c; font-weight: bold">
-                <!-- 金额（调整为4） -->
-                ¥{{ order.amount.toFixed(2) }}
               </el-col>
               <el-col :span="4">
-                <!-- 状态（调整为4） -->
                 <el-tag :type="formatStatus(order.status).type">
                   {{ formatStatus(order.status).label }}
                 </el-tag>
               </el-col>
               <el-col :span="4" class="order-opera">
-                <!-- 操作（调整为5） -->
                 <el-button type="primary" class="button" @click="open_order(order.id)"
-                  >订单详情</el-button
+                  >详情</el-button
                 >
-                <el-button
-                  v-if="formatStatus(order.status).type === 'primary'"
-                  type="primary"
-                  :disabled="
-                    order.status >= OrderStatus.SHIPPED || order.status === OrderStatus.COMPLETED
-                  "
-                  @click="updateOrderStatus(order, OrderStatus.SHIPPED)"
-                  class="button"
-                  >订单发货</el-button
-                >
-                <el-button
-                  v-else-if="formatStatus(order.status).type === 'success'"
-                  type="success"
-                  :disabled="
-                    order.status === OrderStatus.DELIVERED || order.status === OrderStatus.COMPLETED
-                  "
-                  @click="updateOrderStatus(order, OrderStatus.DELIVERED)"
-                  class="button"
-                  >订单派送</el-button
-                >
+
               </el-col>
               <el-col :span="1"></el-col>
               <!-- 留白与表头对齐 -->
@@ -275,12 +213,12 @@ const formatOrderTime = (timestamp: string | number | Date) => {
     <el-dialog v-model="dialogVisible" title="订单详情" width="800px" destroy-on-close>
       <div v-if="currentOrder">
         <div
-          v-if="currentOrder.status === OrderStatus.CANCELLED"
+          v-if="currentOrder.status === OrderStatus.PENDING_PAYMENT"
           style="margin-bottom: 20px; color: #909399; text-align: center"
         >
           <el-steps :active="2" simple style="margin-bottom: 20px">
             <el-step title="订单提交" status="success" icon="Document" />
-            <el-step title="已取消" status="error" icon="CircleCloseFilled" />
+            <el-step title="已逾期" status="error" icon="CircleCloseFilled" />
           </el-steps>
         </div>
         <div v-else>
@@ -290,33 +228,24 @@ const formatOrderTime = (timestamp: string | number | Date) => {
             simple
             style="margin-bottom: 20px"
           >
-            <el-step title="待付款" />
-            <el-step title="待发货" />
-            <el-step title="已发货" />
-            <el-step title="已送达" />
-            <el-step title="已完成" />
+            <el-step title="借阅中" />
+            <el-step title="已归还" />
           </el-steps>
         </div>
         <el-descriptions title="基本信息" :column="2" border>
           <el-descriptions-item label="订单编号">{{ currentOrder.number }}</el-descriptions-item>
-          <el-descriptions-item label="下单时间">{{
-            currentOrder.order_time
+          <el-descriptions-item label="借阅时间">{{
+            formatOrderTime(currentOrder.borrow_time)
           }}</el-descriptions-item>
-          <el-descriptions-item label="收货人">{{ currentOrder.consignee }}</el-descriptions-item>
-          <el-descriptions-item label="联系电话">{{ currentOrder.phone }}</el-descriptions-item>
-          <el-descriptions-item label="支付方式">
-            {{ currentOrder.pay_method === 1 ? '微信支付' : '支付宝' }}
-          </el-descriptions-item>
-          <el-descriptions-item label="订单金额">
-            <span style="color: #f56c6c; font-weight: bold"
-              >¥{{ currentOrder.amount.toFixed(2) }}</span
-            >
-          </el-descriptions-item>
+          <el-descriptions-item label="截止归还时间">{{ formatOrderTime(currentOrder.due_date)}}</el-descriptions-item>
+          <el-descriptions-item label="实际归还时间">{{ formatOrderTime(currentOrder.return_time)}}</el-descriptions-item>                  
+          <el-descriptions-item label="借阅人">{{ currentOrder.user_name }}</el-descriptions-item>
+
         </el-descriptions>
 
         <div style="margin-top: 20px">
-          <h4 style="margin-bottom: 10px">商品清单</h4>
-          <el-table :data="currentOrder.order_detail_list" border stripe size="small">
+          <h4 style="margin-bottom: 10px">借阅清单</h4>
+          <el-table :data="currentOrder.borrow_detail_list" border stripe size="small">
             <el-table-column label="商品图片" width="80" align="center">
               <template #default="scope">
                 <el-image
@@ -328,22 +257,14 @@ const formatOrderTime = (timestamp: string | number | Date) => {
             </el-table-column>
             <el-table-column prop="name" label="书名" show-overflow-tooltip />
             <el-table-column prop="number" label="数量" width="80" align="center" />
-            <el-table-column prop="amount" label="单价" width="100" align="right">
-              <template #default="scope">¥{{ scope.row.amount }}</template>
-            </el-table-column>
-            <el-table-column label="小计" width="100" align="right">
-              <template #default="scope">
-                ¥{{ (scope.row.amount * scope.row.number).toFixed(2) }}
-              </template>
-            </el-table-column>
           </el-table>
         </div>
 
         <div style="margin-top: 20px" v-if="currentOrder.status >= 3">
           <el-alert title="配送信息" type="info" :closable="false">
             <template #default>
-              <div>预计送达：{{ currentOrder.estimated_delivery_time || '计算中...' }}</div>
-              <div>实际发货：{{ currentOrder.deliver_time }}</div>
+              <div>借阅时间：{{ currentOrder.borrow_time || '计算中...' }}</div>
+              <div>归还时间：{{ currentOrder.return_time }}</div>
             </template>
           </el-alert>
         </div>

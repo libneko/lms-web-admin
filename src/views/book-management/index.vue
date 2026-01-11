@@ -28,7 +28,6 @@ const defaultBook: Book = {
   name: '',
   author: '',
   isbn: '',
-  price: 0,
   location: '',
   stock: 1,
   image: '',
@@ -240,7 +239,6 @@ onMounted(async () => {
 <template>
   <div class="book">
     <div class="book-header">
-      <!-- <span class="selected-count">已加载??个订单</span> -->
       <el-button type="primary" class="add" @click="handleAdd"> 添加书籍 </el-button>
 
       <div class="search-area">
@@ -389,7 +387,6 @@ onMounted(async () => {
                   <div class="book-author">作者: {{ item.author }}</div>
                   <div class="book-isbn">ISBN: {{ item.isbn }}</div>
                   <div class="info-label">位置:{{ item.location }}</div>
-                  <div class="info-label">价格:{{ item.price }}</div>
                   <div class="info-label">库存:{{ item.stock }}</div>
                   <div class="book-publisher">出版社: {{ item.publisher }}</div>
                 </el-col>
