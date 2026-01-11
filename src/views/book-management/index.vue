@@ -10,7 +10,6 @@ import {
 import { getCategories } from '@/api/home'
 import type { Book, Category, Order, SendBookData, SendSearch } from '@/api/types'
 import { ElMessage, ElMessageBox, type CollapseModelValue } from 'element-plus'
-import { it, type el } from 'element-plus/es/locales.mjs'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 
 const dialogVisible = ref(false)
@@ -43,7 +42,6 @@ const defaultSend: SendBookData = {
   name: '',
   author: '',
   category_id: '',
-  price: 0,
   image: '',
   description: '',
   status: 1,
@@ -65,14 +63,13 @@ const handleCoverChange = (uploadFile: any) => {
 }
 const handleCurrentChange = (val: number) => {
   console.log(`当前页: ${val}`)
-  // 可以在这里加一行代码让页面滚动回顶部
   fetchBooks() // 重新向后端拿数据
   window.scrollTo(0, 0)
 }
 const handleSizeChange = (val: number) => {
   console.log(`每页 ${val} 条`)
   pageSize.value = val
-  currentPage.value = 1 // 改变每页大小时，建议重置回第一页
+  currentPage.value = 1 // 改变每页大小时，回第一页
   fetchBooks() // 重新向后端拿数据
 }
 

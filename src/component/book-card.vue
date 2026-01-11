@@ -13,7 +13,6 @@ defineProps<{
       <el-image :src="book.image" class="book-img" fit="contain" />
       <template #footer>
         <div class="book-name">{{ book.name }}</div>
-        <div class="book-price">¥{{ book.price }}</div>
       </template>
     </el-card>
   </a>

@@ -43,7 +43,6 @@ export interface SendBookData {
   name: string
   author: string
   category_id: string
-  price: number
   image: string
   description: string
   status: number
@@ -82,24 +81,7 @@ export interface GetBooks {
   records: Book[]
 }
 
-export interface SendPersonId {
-  user_id: number
-}
 
-export interface ReceivePerson {
-  user_id: string
-  name: string
-  email: string
-}
-
-export interface Product extends Book {
-  quantity: number
-  selected: boolean
-  specifications: string[]
-  freeShipping: boolean
-  guarantee: boolean
-  stock: number
-}
 
 export interface User {
   id: number
@@ -159,11 +141,4 @@ export interface SendOrder {
 export interface GetOrders {
   total: number
   records: Order[]
-}
-
-export interface Notice {
-  id: string
-  content: string
-  status: number
-  create_time: string
 }

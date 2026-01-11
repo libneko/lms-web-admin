@@ -6,7 +6,7 @@ import { useRouter } from 'vue-router'
 import { logoutApi } from '@/api/login'
 import { useWebSocket } from '@/utils/websocket'
 
-// 当前登录的员工
+// 当前登录的管理员
 const { connect, close } = useWebSocket()
 const login_user = ref<LoginToken | null>(null)
 const router = useRouter()
@@ -57,10 +57,6 @@ const logout = async () => {
   router.push('/login')
 }
 
-const profile = () => {
-  window.open('/profile', '_blank')
-}
-
 // 外观子菜单逻辑
 const isAppearanceOpen = ref(false)
 const currentTheme = ref<Theme>((localStorage.getItem('theme') as Theme) || Theme.SYSTEM)
@@ -80,7 +76,7 @@ const handleSetTheme = (theme: Theme) => {
       <el-menu router="true">
         <!-- 首页菜单 -->
         <div class="title">
-          <span>小书架</span>
+          <span>图书馆</span>
         </div>
         <div class="menu_item">
           <el-menu-item index="/admin">

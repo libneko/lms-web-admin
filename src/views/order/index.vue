@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { CompleteOrderApi, DeliveryOrderApi, getOrder, GetOrderDetailApi, SendOrderApi } from '@/api/order'
+import { getOrder, GetOrderDetailApi} from '@/api/order'
 import type { Order, SendOrder } from '@/api/types'
 import { OrderStatus, OrderStatusMap } from '@/utils/status'
 import { ElMessage, ElMessageBox, type CollapseModelValue } from 'element-plus'
-import type { el } from 'element-plus/es/locales.mjs'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
 
 const dialogVisible = ref(false)
@@ -14,21 +13,10 @@ const total = ref(0)
 const currentOrder = ref<Order | null>(null) // 存储当前点击的订单数据
 let timer: any = null
 
-const handleChange = (val: CollapseModelValue) => {
-  console.log(val)
-}
 
 const stepActiveIndex = computed(() => {
   const status = currentOrder.value?.status ?? 0
 
-  if (status === 0) return 0
-
-  if (status === OrderStatus.COMPLETED) {
-    return 5 // 全部完成
-  }
-
-  // 对于 1-4 的状态，active 应该是 status - 1
-  // 例如 status=1(待付款)，active应该为0
   return Math.max(0, status)
 })
 
@@ -71,27 +59,14 @@ const formatStatus = (status: number) => {
   // 尝试从 Map 中获取，如果获取不到（比如后端传了个 999），则返回默认对象
   return OrderStatusMap[status] || { label: '未知状态', type: 'info' }
 }
-const updateOrderStatus = async (order: Order, targetStatus: number) => {
 
-  // 完成订单接口
-  const res = await CompleteOrderApi(order.id)
-  if (res.code === 1) {
-    ElMessage.success("成功归还")
-  }
-  else {
-    ElMessage.error("归还失败")
-  }
-  
-}
 const fetchOrders = async () => {
-  const phoneRegex = /^1[3-9]\d{9}$/
-  // 2. 判断输入值是否为手机号
-  const isPhoneNumber = phoneRegex.test(searchQuery.value)
+
 
   const params: SendOrder = {
     page: currentPage.value,
     pageSize: pageSize.value,
-    number: isPhoneNumber ? '' : searchQuery.value,
+    number: searchQuery.value,
     beginTime: '',
     endTime: '',
     status: '',
@@ -213,7 +188,7 @@ const formatOrderTime = (timestamp: string | number | Date) => {
     <el-dialog v-model="dialogVisible" title="订单详情" width="800px" destroy-on-close>
       <div v-if="currentOrder">
         <div
-          v-if="currentOrder.status === OrderStatus.PENDING_PAYMENT"
+          v-if="currentOrder.status === OrderStatus.OVERDUE"
           style="margin-bottom: 20px; color: #909399; text-align: center"
         >
           <el-steps :active="2" simple style="margin-bottom: 20px">
@@ -237,8 +212,8 @@ const formatOrderTime = (timestamp: string | number | Date) => {
           <el-descriptions-item label="借阅时间">{{
             formatOrderTime(currentOrder.borrow_time)
           }}</el-descriptions-item>
-          <el-descriptions-item label="截止归还时间">{{ formatOrderTime(currentOrder.due_date)}}</el-descriptions-item>
-          <el-descriptions-item label="实际归还时间">{{ formatOrderTime(currentOrder.return_time)}}</el-descriptions-item>                  
+          <el-descriptions-item label="截止归还时间">{{ formatOrderTime(currentOrder.due_date) }}</el-descriptions-item>
+          <el-descriptions-item label="实际归还时间" v-if="currentOrder.return_time !== null">{{ formatOrderTime(currentOrder.return_time) }}</el-descriptions-item>                  
           <el-descriptions-item label="借阅人">{{ currentOrder.user_name }}</el-descriptions-item>
 
         </el-descriptions>

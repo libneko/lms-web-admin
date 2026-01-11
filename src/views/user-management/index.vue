@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { User, Search, Plus, Edit, Delete } from '@element-plus/icons-vue'
+import { Delete } from '@element-plus/icons-vue'
 import type { SendSearch } from '@/api/types'
-import { changeStatusApi, deleteUserApi, getUserApi, updateUserApi } from '@/api/user-management'
-import { validateEmail, validatePhone } from '@/api/meta'
+import { changeStatusApi, deleteUserApi, getUserApi } from '@/api/user-management'
+
 
 // 定义用户类型 - 所有属性都是必需的
 interface UserItem {
@@ -42,23 +42,6 @@ const editUserForm = ref({
   avatar: '',
 })
 
-// 表单验证规则
-const formRules = {
-  username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 2, max: 20, message: '用户名长度在2到20个字符', trigger: 'blur' },
-  ],
-  email: [{ required: true, validator: validateEmail, trigger: 'blur' }],
-
-  // 2. 手机号：只有点击了编辑手机号才校验
-  phone: [{ required: true, validator: validatePhone, trigger: 'blur' }],
-
-  // 3. 密码：只有点击了编辑密码才校验
-  password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 20, message: '长度在 6 到 20 个字符', trigger: 'blur' },
-  ],
-}
 
 // 计算属性
 const selectedCount = computed(() => {
@@ -129,9 +112,6 @@ const handleSelectAllChange = (value: boolean) => {
   })
 }
 
-const handleUserSelectChange = () => {
-  // 选择状态变化逻辑可以由计算属性自动处理
-}
 
 const updateUserStatus = async (user: UserItem) => {
   const newStatus = user.status === 1 ? 0 : 1
@@ -195,9 +175,7 @@ const batchDeleteUsers = async () => {
     )
 
     // 4. 调用后端接口
-    // 注意：这里取决于后端具体要求数组还是字符串
-    // 假设1：后端要数组 -> batchDeleteUserApi(selectedIds)
-    // 假设2：后端要逗号分隔字符串 -> batchDeleteUserApi(selectedIds.join(','))
+
     const res = await deleteUserApi(selectedIds.join(','))
 
     if (res.code === 1) {
@@ -213,41 +191,6 @@ const batchDeleteUsers = async () => {
       console.error(error)
     }
     ElMessage.info('已取消删除')
-  }
-}
-
-const openEditUserDialog = (user: UserItem) => {
-  currentEditUser.value = user
-  editUserForm.value = {
-    id: user.id,
-    username: user.username,
-    sex: user.sex,
-    email: user.email,
-    phone: user.phone,
-    status: user.status,
-    avatar: user.avatar,
-  }
-  showEditUserDialog.value = true
-}
-
-const editUser = async () => {
-  if (!currentEditUser.value) return
-
-  try {
-    const res = await updateUserApi(editUserForm.value)
-    if (res.code === 1) {
-      setTimeout(async () => {
-        await fetchUserData()
-        showEditUserDialog.value = false
-        currentEditUser.value = null
-        ElMessage.success('用户信息更新成功')
-      }, 1000)
-    } else {
-      ElMessage.error('更新失败，请稍后重试')
-    }
-  } catch (error) {
-    console.error('更新用户信息失败:', error)
-    ElMessage.error('更新用户信息失败，请稍后重试')
   }
 }
 
@@ -317,7 +260,7 @@ onMounted(() => {
           <div class="user-content">
             <!-- 选择框 -->
             <div class="user-select">
-              <el-checkbox v-model="user.selected" @change="handleUserSelectChange" />
+              <el-checkbox v-model="user.selected" />
             </div>
 
             <!-- 用户信息 -->
@@ -334,7 +277,7 @@ onMounted(() => {
                     {{ user.sex === 1 ? '男' : '女' }}
                   </el-tag>
                 </div>
-                <!-- <div class="create-time">注册时间: {{ user.createTime }}</div> -->
+                
               </div>
             </div>
 
@@ -352,10 +295,7 @@ onMounted(() => {
 
             <!-- 操作按钮 -->
             <div class="user-actions">
-              <!--               <el-button link type="primary" size="small" @click="openEditUserDialog(user)">
-                <el-icon><Edit /></el-icon>
-                编辑
-              </el-button> -->
+
               <el-button
                 link
                 :type="user.status === 1 ? 'warning' : 'success'"
@@ -398,37 +338,6 @@ onMounted(() => {
         />
       </div>
     </el-card>
-
-    <!--      编辑用户对话框 
-    <el-dialog v-model="showEditUserDialog" title="编辑用户" width="500px">
-      <el-form :model="editUserForm" :rules="formRules" label-width="80px">
-        <el-form-item label="用户名">
-          <el-input v-model="editUserForm.username" disabled />
-        </el-form-item>
-        <el-form-item label="性别" prop="sex">
-          <el-radio-group v-model="editUserForm.sex">
-            <el-radio label="男" :value="1" />
-            <el-radio label="女" :value="0" />
-          </el-radio-group>
-        </el-form-item>
-        <el-form-item label="邮箱" prop="email">
-          <el-input v-model="editUserForm.email" placeholder="请输入邮箱" />
-        </el-form-item>
-        <el-form-item label="手机号" prop="phone">
-          <el-input v-model="editUserForm.phone" placeholder="请输入手机号" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-radio-group v-model="editUserForm.status">
-            <el-radio label="启用" :value="1" />
-            <el-radio label="禁用" :value="0" />
-          </el-radio-group>
-        </el-form-item>
-      </el-form>
-      <template #footer>
-        <el-button @click="showEditUserDialog = false">取消</el-button>
-        <el-button type="primary" @click="editUser">确定</el-button>
-      </template>
-    </el-dialog> -->
   </div>
 </template>
 

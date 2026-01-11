@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import type { ApiResponse, Book, BookData, GetBooks, SendBookData, SendSearch } from './types'
+import type { ApiResponse, BookData, GetBooks, SendBookData, SendSearch } from './types'
 
 export const submitBookApi = (book: SendBookData): Promise<ApiResponse<BookData>> => {
   return request.post('/admin/book', book)

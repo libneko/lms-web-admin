@@ -15,9 +15,7 @@ export const deleteUserApi = (ids: string): Promise<ApiResponse<object>> => {
   return request.delete(`/admin/user?ids=${ids}`)
 }
 
-export const updateUserApi = (user: User): Promise<ApiResponse<object>> => {
-  return request.put('/admin/user', user)
-}
+
 
 export const changeStatusApi = (id: number, status: number): Promise<ApiResponse<object>> => {
   return request.post(`/admin/user/status/${status}`, null, {
