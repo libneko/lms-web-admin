@@ -54,6 +54,7 @@ const login = async () => {
               type="password"
               placeholder="请输入密码"
               show-password
+              @keyup.enter="login"
             />
           </el-form-item>
         </el-form>
