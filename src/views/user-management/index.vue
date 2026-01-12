@@ -28,15 +28,7 @@ const pagination = ref({
   total: 0,
 })
 
-const editUserForm = ref({
-  id: 0,
-  username: '',
-  sex: 1,
-  email: '',
-  phone: '',
-  status: 0,
-  avatar: '',
-})
+
 
 const selectedCount = computed(() => {
   return userList.value.filter((user) => user.selected).length

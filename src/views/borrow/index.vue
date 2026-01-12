@@ -6,8 +6,8 @@ import { ElMessage } from 'element-plus'
 import { computed, onMounted, ref, watch } from 'vue'
 
 const dialogVisible = ref(false)
-const currentPage = ref('1')
-const pageSize = ref('5')
+const currentPage = ref(1)
+const pageSize = ref(5)
 const searchQuery = ref('')
 const total = ref(0)
 const currentBorrow = ref<Borrow | null>(null)
@@ -23,9 +23,9 @@ const handleCurrentChange = (val: number) => {
   fetchBorrows()
   window.scrollTo(0, 0)
 }
-const handleSizeChange = (val: string) => {
+const handleSizeChange = (val: number) => {
   pageSize.value = val
-  currentPage.value = '1'
+  currentPage.value = 1
   fetchBorrows()
 }
 
@@ -56,8 +56,8 @@ const formatStatus = (status: number) => {
 
 const fetchBorrows = async () => {
   const params: SendBorrow = {
-    page: currentPage.value,
-    pageSize: pageSize.value,
+    page: String(currentPage.value),
+    pageSize: String(pageSize.value),
     number: searchQuery.value.trim(),
     beginTime: '',
     endTime: '',
@@ -76,7 +76,7 @@ const fetchBorrows = async () => {
 watch(searchQuery, () => {
   if (timer) clearTimeout(timer)
   timer = setTimeout(() => {
-    currentPage.value = '1'
+    currentPage.value = 1
     fetchBorrows()
   }, 500)
 })
