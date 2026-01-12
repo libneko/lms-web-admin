@@ -205,7 +205,7 @@ onMounted(() => {
     <!-- 搜索栏 -->
     <div class="search-bar">
       <div class="stats">
-        <span>总计: {{ userList.length }} 人</span>
+        <span>总计: {{ pagination.total }} 人</span>
         <span>活跃: {{ activeUserCount }} 人</span>
       </div>
     </div>
