@@ -10,8 +10,8 @@ import {
 import { getCategories } from '@/api/home'
 import type { Book, Category, SendBookData, SendSearch } from '@/api/types'
 import { formatRelativeTime } from '@/utils/datetime'
-import { ElMessage, ElMessageBox, type CollapseModelValue } from 'element-plus'
-import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { onMounted, reactive, ref, watch } from 'vue'
 
 const dialogVisible = ref(false)
 const isEditMode = ref(false)
@@ -59,8 +59,21 @@ const tableData = ref<Book[]>([])
 const bookForm = reactive<Book>({ ...defaultBook })
 
 const handleCoverChange = (uploadFile: any) => {
-  rawFile.value = uploadFile.raw
-  bookForm.image = URL.createObjectURL(uploadFile.raw)
+  const file = uploadFile.raw
+  const isJPGOrPNG = file.type === 'image/jpeg' || file.type === 'image/png'
+  const isLt2M = file.size / 1024 / 1024 < 2
+
+  if (!isJPGOrPNG) {
+    ElMessage.error('上传封面图片只能是 JPG 或 PNG 格式!')
+    return
+  }
+  if (!isLt2M) {
+    ElMessage.error('上传封面图片大小不能超过 2MB!')
+    return
+  }
+
+  rawFile.value = file
+  bookForm.image = URL.createObjectURL(file)
 }
 const handleCurrentChange = (val: number) => {
   fetchBooks()
@@ -242,6 +255,7 @@ onMounted(async () => {
               :show-file-list="false"
               :auto-upload="false"
               :on-change="handleCoverChange"
+              accept="image/jpeg,image/png"
             >
               <img v-if="bookForm.image" :src="bookForm.image" class="cover-image" />
               <el-icon v-else class="cover-uploader-icon"><Plus /></el-icon>

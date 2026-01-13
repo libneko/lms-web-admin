@@ -2,11 +2,9 @@
 import { ref, onMounted } from 'vue'
 import { getCategories, getRandomBooks } from '@/api/home'
 import type { Book, Category } from '@/api/types'
-import { useRouter } from 'vue-router'
 
 import BookGrid from '@/component/book-grid.vue'
 
-const router = useRouter()
 const categories = ref<Category[]>([])
 const books = ref<Book[]>([])
 const banners = ref<Book[]>([])
@@ -46,13 +44,7 @@ onMounted(() => {
 
         <el-scrollbar wrap-style="overflow-x: auto; white-space: nowrap;">
           <el-space size="10">
-            <el-button
-              v-for="category in categories"
-              :key="category.id"
-              type="default"
-              plain
-              round
-            >
+            <el-button v-for="category in categories" :key="category.id" type="default" plain round>
               {{ category.name }}
             </el-button>
           </el-space>

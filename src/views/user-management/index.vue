@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { Delete } from '@element-plus/icons-vue'
 import type { SendSearch } from '@/api/types'
 import { changeStatusApi, deleteUserApi, getUserApi } from '@/api/user-management'
 
@@ -27,8 +26,6 @@ const pagination = ref({
   pageSize: 10,
   total: 0,
 })
-
-
 
 const selectedCount = computed(() => {
   return userList.value.filter((user) => user.selected).length
