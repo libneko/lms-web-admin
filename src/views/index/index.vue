@@ -20,13 +20,6 @@ const loadData = async () => {
   suggestBooks.value = books.value.slice(3, 23)
 }
 
-const searchCategory = (id: number) => {
-  router.push({
-    path: '/search',
-    query: { categoryId: id },
-  })
-}
-
 const currentIndex = ref(0)
 
 onMounted(() => {
@@ -56,7 +49,6 @@ onMounted(() => {
             <el-button
               v-for="category in categories"
               :key="category.id"
-              @click="searchCategory(category.id)"
               type="default"
               plain
               round
