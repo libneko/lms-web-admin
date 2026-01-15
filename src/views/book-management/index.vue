@@ -46,7 +46,7 @@ const defaultSend: SendBookData = {
   image: '',
   description: '',
   status: 1,
-  stock: 0,
+  stock: 1,
   isbn: '',
   publisher: '',
   location: '',
@@ -285,18 +285,16 @@ onMounted(async () => {
                 <el-input v-model="bookForm.isbn" placeholder="例如: 9787xxx" />
               </el-form-item>
             </el-col>
-          </el-row>
-          <el-row :gutter="20">
             <el-col :span="12">
               <el-form-item label="位置">
                 <el-input v-model="bookForm.location" placeholder="例如: 1-1-1001" />
               </el-form-item>
             </el-col>
-            <el-col :span="12">
-              <el-form-item label="数量">
-                <el-input-number v-model="bookForm.stock" :min="1" :max="10" style="width: 100%" />
-              </el-form-item>
-            </el-col>
+ 
+          </el-row>
+
+          <el-row :gutter="20">
+
           </el-row>
 
           <el-row :gutter="20">
