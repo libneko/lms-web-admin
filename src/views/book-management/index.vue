@@ -107,10 +107,7 @@ const changestatus = async (item: Book) => {
 }
 
 const submitBook = async () => {
-  if (bookForm.stock < 1 || bookForm.stock > 10) {
-    ElMessage.error('库存数量必须在1-10之间')
-    return
-  }
+
 
   if (rawFile.value) {
     try {
@@ -373,7 +370,6 @@ onMounted(async () => {
                   <div class="book-author">作者: {{ item.author }}</div>
                   <div class="book-isbn">ISBN: {{ item.isbn }}</div>
                   <div class="info-label">位置:{{ item.location }}</div>
-                  <div class="info-label">库存:{{ item.stock }}</div>
                   <div class="book-publisher">出版社: {{ item.publisher }}</div>
                 </el-col>
               </el-row>
